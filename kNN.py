@@ -85,8 +85,6 @@ def NNAdd (new_index, l, init_attempts, g):
                     g.node[i]['rev_neibs'].append(new_index)
                     g.node[maxD[0]]['rev_neibs'].remove(new_index)
                     g.node[new_index]['neibs'].pop(maxD[0])
-        if len(g.node[new_index]['neibs']) < l:
-            print("re")
     else:
         for i in sort_by_dist[0:l]:
             g.add_edge(new_index, i)
@@ -200,6 +198,59 @@ def evaluateRecall (dg, K):
 
 K = 10
 
+#Cities Test
+
+for j in [1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 8000, 9000]:
+    G = nx.DiGraph()
+    amounts = 0
+    pos = {}
+    labels = {}
+    f = open("worldcitiespop.txt",'r')
+    i = 1
+    for line in f:
+        temp = line.rstrip('\n').split(',')
+        if len(temp) == 7 and temp[0] == "it":
+            pos[i] = (float(temp[5]), float(temp[6]))
+            labels[i] = i
+            G.add_node(i, pars=pos[i], type=labels[i], isnew=True, neibs={}, rev_neibs=[], lastchecked=(0, 0))
+            #NNAdd(i, K+3, 2, G)
+            i += 1
+        if i > j:
+            break
+
+    f.close()
+
+    print(len(pos))
+
+    #a = datetime.datetime.now()
+
+    #for i in reversed(range(1, len(pos)+1)):
+        #NNAdd(i, K, 1, G)
+
+    # b = datetime.datetime.now()
+
+    # print("creating kNN graph for NNAdd algorithm")
+    # print(b-a)
+
+    #a = datetime.datetime.now()
+
+    NNDescentFullReworked(G, K, 0.5, 0.001)
+    #NNDescentBasicReworked(G, K)
+    #b = datetime.datetime.now()
+
+    #print("creating kNN graph for NNDescent algorithm")
+    #print(b-a)
+
+
+    # print ("Distance has been calculated:")
+    print(amounts)
+    # print("times")
+    amounts = 0
+    #print ("Recall")
+    print(evaluateRecall(G, K))
+
+	
+
 # Iris test
 
 # G = nx.DiGraph()
@@ -309,55 +360,3 @@ K = 10
 # # print("times")
 # #amounts = 0
 #
-
-#Cities Test
-
-#for j in [1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 8000, 9000]:
-for j in [7000]:
-    G = nx.DiGraph()
-    amounts = 0
-    pos = {}
-    labels = {}
-    f = open("worldcitiespop.txt",'r')
-    i = 1
-    for line in f:
-        temp = line.rstrip('\n').split(',')
-        if len(temp) == 7 and temp[0] == "it":
-            pos[i] = (float(temp[5]), float(temp[6]))
-            labels[i] = i
-            G.add_node(i, pars=pos[i], type=labels[i], isnew=True, neibs={}, rev_neibs=[], lastchecked=(0, 0))
-            #NNAdd(i, K+3, 2, G)
-            i += 1
-        if i > j:
-            break
-
-    f.close()
-
-    print(len(pos))
-
-    #a = datetime.datetime.now()
-
-    #for i in reversed(range(1, len(pos)+1)):
-        #NNAdd(i, K, 1, G)
-
-    # b = datetime.datetime.now()
-
-    # print("creating kNN graph for NNAdd algorithm")
-    # print(b-a)
-
-    #a = datetime.datetime.now()
-
-    NNDescentFullReworked(G, K, 0.5, 0.001)
-    #NNDescentBasicReworked(G, K)
-    #b = datetime.datetime.now()
-
-    #print("creating kNN graph for NNDescent algorithm")
-    #print(b-a)
-
-
-    # print ("Distance has been calculated:")
-    print(amounts)
-    # print("times")
-    amounts = 0
-    #print ("Recall")
-    print(evaluateRecall(G, K))
